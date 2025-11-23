@@ -1,41 +1,176 @@
 # AggieIntelligence
 A Group Project for Team Aggie Intelligence for UC Davis AISC (AI Student Collective) Project 1 Aggie Hangman Beginner Project
-word_that_needs_to_be_guessed = input("Please enter a word to guess please do not put anything that contains * ")
-word_that_needs_to_be_guessed.strip(word_that_needs_to_be_guessed)
-###for this game short words will be excluded (using .txt file)
-while '\t' in word_that_needs_to_be_guessed or '*' in word_that_needs_to_be_guessed:
-    word_that_needs_to_be_guessed = input("Please enter a word to guess please do not put anything that contains * ")
-    return word_that_needs_to_be_guessed
 
+import random
+import string
 
-def letter_we_are_guessing(word_that_needs_to_be_guessed: str)
-    letter_we_are_guessing = input("Please enter a letter")
-    letter_we_are_guessing.lower()
-    letter_we_are_guessing.strip(letter_we_are_guessing)
-    return letter_we_are_guessing
+word_bank = ["aggies", "ucdavis", "gunrock","silo","wellman","olson","egghead","california","giedt","tercero","segundo","latitude","cuarto","coho","asucd",
+"courses", "passtime", "shields", "picnic","quad","pavillion","arboretum","mondavi","farmersmarket","downtown","creamery","pantry","squirrel","bike","cows",
+"arc","undergraduate"]
 
+hangcow_stages = [
 
-def reveal_letter_we_are_guessing_is_right((word_that_needs_to_be_guessed: str
+r"""
+            \   /
+             \ /
+              |
+             / \
+            /   \
+""",
 
-)
+r"""
+          / |_| \
+""",
 
-def partially_guessed_word
+r""""
+          / |_| \
+        (/| • • |\)
+           _____
+          | 0 0 |___
+""",
 
-    if letter_we_are_guessing == word_that_needs_to_be_guessed:
-        print("You are right")
-        print(partially_guessed_word * len(word_that_needs_to_be_guessed))
-        else print("incorrect, please try again")
-        print(body_part)
-# if statements are essentially True or False or Yes and No
-# The function as a way to determine if something is present or not and is called Boolean
-#
+r"""
+          / |_| \
+        (/| • • |\)
+           _____
+          | 0 0 |___
+          |_____|   \\
+          |         ||
+""",
 
-## Things we need in order for next steps , amount of attempts till becoming unalived
-# no more txt file other player will 'enter' code word for other player to guess to make it a bit easier
-# we will use len function to help the code know how many letters are comprised in the word we are trying to guess
+r"""
+          / |_| \
+        (/| • • |\)
+           _____
+          | 0 0 |___
+          |_____|   \\ 
+          |         ||
+          __/
+""",
 
+r"""
+          / |_| \
+        (/| • • |\)
+           _____
+          | 0 0 |___
+          |_____|   \\ 
+          |         ||
+          __/__/
+""",
 
+r"""
+          / |_| \
+        (/| • • |\)
+           _____
+          | 0 0 |___
+          |_____|   \\ 
+          |         ||
+          __/__/__/
+""",
 
+r"""
+          / |_| \
+        (/| • • |\)
+           _____
+          | 0 0 |___
+          |_____|   \\ 
+          |         ||
+          __/__/__/__/
+"""
+]
+
+max_attempts = len(hangcow_stages) - 1 #subtracting by 1 to get 6 attempts as needed
+def choose_a_word():
+    return random.choice(word_bank).upper()
+def display_progress(word, guessed_letters):
+    display = []
+    #ch = character
+    for ch in word:
+        #seeing if a character is not an alphabetic letter
+        if not ch. isalpha(): #shows spaces/punctuation
+            display.append(ch)
+        elif ch in guessed_letters:
+            display.append(ch)
+        else:
+            #displays the word in dashes "-"
+            display.append("_")
+    #.join = displaying letter in word all together when guessed correctly
+    return " ".join(display)
+
+def game_loop():
+    guessed_letters = set()
+    word = choose_a_word()
+    guessed = display_progress(word, guessed_letters)
+    wrong_guesses = 0
+
+    print("Welcome to UC DAVIS'S AGGIE INTELLIGENCE'S HANGCOW")
+    print(f"You have {max_attempts} attempts to save the cow.")
+
+    while True:
+        print(hangcow_stages[wrong_guesses])
+        print("Word: ", display_progress(word,guessed_letters))
+        print("Guessed letters: ", " ".join(sorted(guessed_letters)) if guessed_letters else "None")
+        print(f"Wrong guesses left: {max_attempts - wrong_guesses}")
+        guess = input("Guess a letter or phrase:").strip().upper()
+
+        if not guess:
+            print("no input, please try again")
+            continue
+
+        #if player guesses more than one letter, assuming they are now trying to guess a word or finish the word
+        if len(guess) > 1:
+            if guess == word:
+                print("n/Correct! You were able to save the cow!")
+                print("Word:", word)
+                return True
+            else:
+                wrong_guesses += 1
+                print("That full guess is incorrect, please try again")
+        else:
+            #the amount of letters on the screen is the same as the amount guessed
+            letter = guess
+            if letter not in string.ascii_uppercase:
+                print("Please guess an English Letter (A-Z)")
+                continue
+
+            if letter in guessed:
+                print("You already guessed this letter")
+            else:
+                guessed.add(letter)
+
+            if letter not in word:
+                wrong_guesses += 1
+                print(f"No '{letter}'. The cow is getting worried...")
+            else:
+                print(f"Nice! '{letter}' is in the word")
+
+        # Checking if the player won the game
+        revealed = "".join([ch if (not ch.isalpha() or ch in guessed) else "_" for ch in word])
+        #if there are no more blanks
+        if "_" not in revealed:
+            print("\nGuess the word, claim the win, classic Aggie move.")
+            print("Word:", word)
+            return True
+
+        # Checking if the player has lost the game
+        if wrong_guesses >= max_attempts:
+            print(hangcow_stages[wrong_guesses])
+            print("\n Oh no - the cow couldn't be saved.")
+            print("The word was:", word)
+            return False
+
+        print("-" * 40)
+
+def main():
+    while True:
+        game_loop()
+        again = input("Do you want to play again? (y/n): ").strip().upper()
+        if again != "Y":
+            print("Thanks for playing Hangcow! Go Aggies!")
+            break
+
+if __name__ == "__main__":
+            main()
 
 '''
 For the next part we want to see if our attempt was right 
@@ -68,6 +203,7 @@ for each ---- for loop
 until ----- while loop
  if statement ---- True or False 
  else ----- is if something is false or not true what is the alternative option 
- 
-    '''
+
+'''
+
 
