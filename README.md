@@ -120,7 +120,7 @@ def game_loop():
         #if player guesses more than one letter, assuming they are now trying to guess a word or finish the word
         if len(guess) > 1:
             if guess == word:
-                print("n/Correct! You were able to save the cow!")
+                print("\nCorrect! You were able to save the cow!")
                 print("Word:", word)
                 return True
             else:
